@@ -1,0 +1,1 @@
+# shinja_karuta
