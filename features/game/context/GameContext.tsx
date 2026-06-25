@@ -9,7 +9,6 @@ import {
   useEffect,
   type ReactNode,
 } from 'react';
-import { flushSync } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import type {
   GameState,
@@ -98,6 +97,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const gsRef = useRef<GameState | null>(null);
   // Forward reference for beginNextRound (defined after resolveRound)
   const beginNextRoundRef = useRef<((state: GameState) => void) | null>(null);
+
+  // ────────────────────────────────────────────────────────────
+  // Navigation — driven by phase changes after state is committed
+  // ────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    if (!gameState) return;
+    if (gameState.phase === 'memorizing') router.push('/game/memorize');
+    else if (gameState.phase === 'playing') router.push('/game/play');
+    else if (gameState.phase === 'finished') router.push('/game/result');
+  }, [gameState?.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const clearRoundTimers = useCallback(() => {
     [cpuTimer, karutaNashiTimer].forEach((r) => {
@@ -263,13 +273,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
           const finished: GameState = { ...nextState, phase: 'finished' };
           gsRef.current = finished;
           setGameState(finished);
-          router.push('/game/result');
+          // navigation handled by the phase-change useEffect above
         } else {
           beginNextRoundRef.current?.(nextState);
         }
       }, 1500);
     },
-    [clearRoundTimers, router]
+    [clearRoundTimers]
   );
 
   // ────────────────────────────────────────────────────────────
@@ -349,21 +359,18 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const allCards = getDemoCards(DEMO_DECK_ID);
     const state = createInitialGameState(allCards);
     gsRef.current = state;
-    flushSync(() => {
-      setGameState(state);
-      setRoundResult(null);
-    });
-
-    router.push('/game/memorize');
+    setGameState(state);
+    setRoundResult(null);
+    // navigation to /game/memorize handled by the phase-change useEffect above
 
     memTimer.current = setTimeout(() => {
       const playingState: GameState = { ...(gsRef.current ?? state), phase: 'playing' };
       gsRef.current = playingState;
       setGameState(playingState);
-      router.push('/game/play');
+      // navigation to /game/play handled by the phase-change useEffect above
       beginNextRound(playingState);
     }, MEMORIZATION_DURATION_MS);
-  }, [router, beginNextRound, clearRoundTimers]);
+  }, [beginNextRound, clearRoundTimers]);
 
   // ────────────────────────────────────────────────────────────
   // Player answer
