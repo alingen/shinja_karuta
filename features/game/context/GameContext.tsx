@@ -9,6 +9,7 @@ import {
   useEffect,
   type ReactNode,
 } from 'react';
+import { flushSync } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import type {
   GameState,
@@ -348,8 +349,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const allCards = getDemoCards(DEMO_DECK_ID);
     const state = createInitialGameState(allCards);
     gsRef.current = state;
-    setGameState(state);
-    setRoundResult(null);
+    flushSync(() => {
+      setGameState(state);
+      setRoundResult(null);
+    });
 
     router.push('/game/memorize');
 
