@@ -75,9 +75,11 @@ export default function PlayPage() {
           {cpuCards.map(({ card }) => (
             <div
               key={card.id}
-              className="h-14 rounded-lg bg-stone-300 shadow-sm"
-              aria-hidden="true"
-            />
+              className="rounded-lg border-2 border-amber-200 bg-white p-2 text-center shadow-sm"
+            >
+              <p className="text-xs font-semibold text-amber-700 truncate">{card.title}</p>
+              <p className="mt-1 text-xs text-stone-500 leading-tight line-clamp-2">{card.displayText}</p>
+            </div>
           ))}
         </div>
       </section>
