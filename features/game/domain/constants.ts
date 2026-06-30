@@ -31,10 +31,10 @@ export const CPU_DIFFICULTY_CONFIGS: Record<
   CpuDifficultyConfig
 > = {
   easy: {
-    mistakeRateMultiplier: 1.5,
-    confusionMistakeBonus: 0.2,
-    karutaNashiMistakeRate: 0.3,
-    speedMultiplier: 1.5,
+    mistakeRateMultiplier: 2.5,
+    confusionMistakeBonus: 0.3,
+    karutaNashiMistakeRate: 0.5,
+    speedMultiplier: 3.0,
   },
   normal: {
     mistakeRateMultiplier: 1.0,
@@ -51,7 +51,7 @@ export const CPU_DIFFICULTY_CONFIGS: Record<
 };
 
 /** MVP で使用する CPU 難易度 */
-export const DEFAULT_CPU_DIFFICULTY: CpuDifficulty = "normal";
+export const DEFAULT_CPU_DIFFICULTY: CpuDifficulty = "easy";
 
 // ────────────────────────────────────────────────────────────
 // MVP デッキ ID
